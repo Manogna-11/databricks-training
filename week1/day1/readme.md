@@ -18,8 +18,6 @@ The main goal of this session was to get familiar with basic SQL queries and und
 * Aggregate functions like COUNT, SUM, AVG
 * String matching using LIKE
 * Working with date conditions
-* Introduction to JOIN queries
-* Basic nested queries
 
 ## Platform Used
 
