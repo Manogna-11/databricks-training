@@ -72,3 +72,15 @@ MySQL v5.7
 - LIMIT
 
 ---
+
+
+## Learning Outcome
+
+By completing this practice, I learned:
+
+- How to retrieve and filter records
+- How to group data using GROUP BY
+- How to use aggregate functions
+- How to apply conditions using HAVING
+- How to search patterns using LIKE
+- How to write optimized SQL queries
