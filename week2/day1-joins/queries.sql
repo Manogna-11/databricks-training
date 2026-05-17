@@ -1,285 +1,161 @@
--- 1. Retrieve the names of employees and their corresponding managers from the "employees" table, ensuring that even employees without managers are included.
-
-SELECT e.emp_name AS Employee_Name,
-       m.emp_name AS Manager_Name
+-- 1. Retrieve the names of employees and their corresponding managers from the employees table, including employees without managers
+SELECT e.emp_name, m.emp_name AS manager_name
 FROM employees e
-LEFT JOIN employees m
-ON e.manager_id = m.emp_id;
+LEFT JOIN employees m ON e.manager_id = m.emp_id;
 
-
--- 2. Display all employees and their corresponding departments from the "employees" and "departments" tables, showing employees even if they don't belong to any department.
-
-SELECT e.emp_name,
-       d.dept_name
+-- 2. Display all employees and their corresponding departments, including employees without departments
+SELECT e.emp_name, d.dept_name
 FROM employees e
-LEFT JOIN departments d
-ON e.dept_id = d.dept_id;
+LEFT JOIN departments d ON e.dept_id = d.dept_id;
 
-
--- 3. List the names of employees who report to a manager, along with their manager's name, from the "employees" table.
-
-SELECT e.emp_name AS Employee_Name,
-       m.emp_name AS Manager_Name
+-- 3. List employees who report to a manager with manager name
+SELECT e.emp_name, m.emp_name AS manager_name
 FROM employees e
-INNER JOIN employees m
-ON e.manager_id = m.emp_id;
+INNER JOIN employees m ON e.manager_id = m.emp_id;
 
-
--- 4. Find the total salary paid to each employee and their respective department, including departments with no employees.
-
-SELECT d.dept_name,
-       e.emp_name,
-       s.salary
+-- 4. Find total salary per employee with department (include departments with no employees)
+SELECT d.dept_name, e.emp_name, s.salary
 FROM departments d
-LEFT JOIN employees e
-ON d.dept_id = e.dept_id
-LEFT JOIN salary s
-ON e.emp_id = s.emp_id;
+LEFT JOIN employees e ON d.dept_id = e.dept_id
+LEFT JOIN salary s ON e.emp_id = s.emp_id;
 
-
--- 5. Display a list of employees who do not belong to any department, even if the department data is missing.
-
+-- 5. Employees who do not belong to any department
 SELECT emp_name
 FROM employees
 WHERE dept_id IS NULL;
 
-
--- 6. Fetch the names of employees and the projects they are assigned to. For employees who are not assigned any projects, show NULL for the project.
-
-SELECT e.emp_name,
-       p.project_name
+-- 6. Employees and their projects (NULL if no project)
+SELECT e.emp_name, p.project_name
 FROM employees e
-LEFT JOIN projects p
-ON e.emp_id = p.emp_id;
+LEFT JOIN projects p ON e.emp_id = p.emp_id;
 
-
--- 7. List all employees who have completed at least one project, showing their names and the project names.
-
-SELECT e.emp_name,
-       p.project_name
+-- 7. Employees who have at least one project
+SELECT DISTINCT e.emp_name, p.project_name
 FROM employees e
-INNER JOIN projects p
-ON e.emp_id = p.emp_id;
+INNER JOIN projects p ON e.emp_id = p.emp_id;
 
+-- 8. All projects with employees (include projects without employees)
+SELECT p.project_name, e.emp_name
+FROM projects p
+LEFT JOIN employees e ON p.emp_id = e.emp_id;
 
--- 8. Show the names of employees and their projects, ensuring that no project is omitted even if an employee is not assigned to it.
-
-SELECT e.emp_name,
-       p.project_name
+-- 9. Employees with salary (NULL if no salary)
+SELECT e.emp_name, s.salary
 FROM employees e
-RIGHT JOIN projects p
-ON e.emp_id = p.emp_id;
+LEFT JOIN salary s ON e.emp_id = s.emp_id;
 
-
--- 9. Find all employees and their corresponding salaries, and display NULL for salary if there is no salary record for the employee.
-
-SELECT e.emp_name,
-       s.salary
+-- 10. Employees with departments (including NULL departments)
+SELECT e.emp_name, d.dept_name
 FROM employees e
-LEFT JOIN salary s
-ON e.emp_id = s.emp_id;
+LEFT JOIN departments d ON e.dept_id = d.dept_id;
 
+-- 11. All departments with employees (including empty departments)
+SELECT d.dept_name, e.emp_name
+FROM departments d
+LEFT JOIN employees e ON d.dept_id = e.dept_id;
 
--- 10. Retrieve the names of employees and their corresponding department names, including employees who are not in any department.
-
-SELECT e.emp_name,
-       d.dept_name
+-- 12. Employees with contact info (including missing contacts)
+SELECT e.emp_name, c.phone
 FROM employees e
-LEFT JOIN departments d
-ON e.dept_id = d.dept_id;
+LEFT JOIN contacts c ON e.emp_id = c.emp_id;
 
-
--- 11. Find the names of all departments and employees, ensuring that departments with no employees are included.
-
-SELECT d.dept_name,
-       e.emp_name
+-- 13. Employees + departments + departments without employees
+SELECT e.emp_name, d.dept_name
 FROM employees e
-RIGHT JOIN departments d
-ON e.dept_id = d.dept_id;
-
-
--- 12. List all employees with their contact information, including employees without contact records.
-
-SELECT e.emp_name,
-       c.phone
-FROM employees e
-LEFT JOIN contacts c
-ON e.emp_id = c.emp_id;
-
-
--- 13. Show the names of employees and their department names,including employees not assigned to any department and departments without employees.
-
-SELECT e.emp_name,
-       d.dept_name
-FROM employees e
-LEFT JOIN departments d
-ON e.dept_id = d.dept_id
-
+LEFT JOIN departments d ON e.dept_id = d.dept_id
 UNION
+SELECT e.emp_name, d.dept_name
+FROM departments d
+LEFT JOIN employees e ON e.dept_id = d.dept_id;
 
-SELECT e.emp_name,
-       d.dept_name
+-- 14. Employees with no projects
+SELECT e.emp_name, p.project_name
 FROM employees e
-RIGHT JOIN departments d
-ON e.dept_id = d.dept_id;
-
-
--- 14. Find employees who have not completed any project, along with the project details where applicable.
-
-SELECT e.emp_name,
-       p.project_name
-FROM employees e
-LEFT JOIN projects p
-ON e.emp_id = p.emp_id
+LEFT JOIN projects p ON e.emp_id = p.emp_id
 WHERE p.project_id IS NULL;
 
-
--- 15. Retrieve the names of employees and the names of their projects, including employees who are not working on any project.
-
-SELECT e.emp_name,
-       p.project_name
+-- 15. Employees and projects (including NULL projects)
+SELECT e.emp_name, p.project_name
 FROM employees e
-LEFT JOIN projects p
-ON e.emp_id = p.emp_id;
+LEFT JOIN projects p ON e.emp_id = p.emp_id;
 
+-- 16. All projects with employees (including unassigned projects)
+SELECT p.project_name, e.emp_name
+FROM projects p
+LEFT JOIN employees e ON p.emp_id = e.emp_id;
 
--- 16. List all projects and the employees assigned to them, even for projects that have no employees.
-
-SELECT p.project_name,
-       e.emp_name
+-- 17. Employees with manager and at least one project
+SELECT e.emp_name, m.emp_name AS manager_name, p.project_name
 FROM employees e
-RIGHT JOIN projects p
-ON e.emp_id = p.emp_id;
+INNER JOIN employees m ON e.manager_id = m.emp_id
+INNER JOIN projects p ON e.emp_id = p.emp_id;
 
-
--- 17. Show the names of all employees who have both a manager and at least one project, listing the manager's name as well.
-
-SELECT e.emp_name,
-       m.emp_name AS Manager_Name,
-       p.project_name
+-- 18. Employees with departments only (exclude NULL departments)
+SELECT e.emp_name, d.dept_name
 FROM employees e
-INNER JOIN employees m
-ON e.manager_id = m.emp_id
-INNER JOIN projects p
-ON e.emp_id = p.emp_id;
+INNER JOIN departments d ON e.dept_id = d.dept_id;
 
-
--- 18. List the names of employees and the corresponding department names, but exclude those employees who don't belong to a department.
-
-SELECT e.emp_name,
-       d.dept_name
+-- 19. Employees with departments (standard join)
+SELECT e.emp_name, d.dept_name
 FROM employees e
-INNER JOIN departments d
-ON e.dept_id = d.dept_id;
+JOIN departments d ON e.dept_id = d.dept_id;
 
+-- 20. All departments with employees
+SELECT d.dept_name, e.emp_name
+FROM departments d
+LEFT JOIN employees e ON d.dept_id = e.dept_id;
 
--- 19. Display employees who belong to multiple departments, showing the employee's name and the department names.
-
-SELECT emp_name,
-       dept_id
-FROM employees;
-
-
--- 20. List the names of all departments and employees, ensuring that even if a department has no employees, it is included in the result.
-
-SELECT d.dept_name,
-       e.emp_name
+-- 21. Employees with projects but no department
+SELECT e.emp_name, p.project_name
 FROM employees e
-RIGHT JOIN departments d
-ON e.dept_id = d.dept_id;
-
-
--- 21. Retrieve employees who have worked on at least one project and do not belong to a department, listing their name and project details.
-
-SELECT e.emp_name,
-       p.project_name
-FROM employees e
-INNER JOIN projects p
-ON e.emp_id = p.emp_id
+INNER JOIN projects p ON e.emp_id = p.emp_id
 WHERE e.dept_id IS NULL;
 
-
--- 22. Find the total number of employees who belong to a department, ensuring the departments with no employees are still included.
-
-SELECT d.dept_name,
-       COUNT(e.emp_id) AS Total_Employees
+-- 22. Department-wise employee count (including empty departments)
+SELECT d.dept_name, COUNT(e.emp_id) AS employee_count
 FROM departments d
-LEFT JOIN employees e
-ON d.dept_id = e.dept_id
+LEFT JOIN employees e ON d.dept_id = e.dept_id
 GROUP BY d.dept_name;
 
-
--- 23. Show the employees and their managers, displaying only those employees who report to a manager, excluding employees without managers.
-
-SELECT e.emp_name,
-       m.emp_name AS Manager_Name
+-- 23. Employees who report to a manager
+SELECT e.emp_name, m.emp_name AS manager_name
 FROM employees e
-INNER JOIN employees m
-ON e.manager_id = m.emp_id;
+INNER JOIN employees m ON e.manager_id = m.emp_id;
 
-
--- 24. Display all employee names along with their corresponding managers' names, but include employees who do not have managers.
-
-SELECT e.emp_name,
-       m.emp_name AS Manager_Name
+-- 24. Employees with managers (including NULL managers)
+SELECT e.emp_name, m.emp_name AS manager_name
 FROM employees e
-LEFT JOIN employees m
-ON e.manager_id = m.emp_id;
+LEFT JOIN employees m ON e.manager_id = m.emp_id;
 
-
--- 25. Find the names of departments and the number of employees in each department, including departments that have no employees.
-
-SELECT d.dept_name,
-       COUNT(e.emp_id) AS Employee_Count
+-- 25. Department-wise employee count
+SELECT d.dept_name, COUNT(e.emp_id) AS employee_count
 FROM departments d
-LEFT JOIN employees e
-ON d.dept_id = e.dept_id
+LEFT JOIN employees e ON d.dept_id = e.dept_id
 GROUP BY d.dept_name;
 
+-- 26. All employees with departments (including empty departments)
+SELECT e.emp_name, d.dept_name
+FROM departments d
+LEFT JOIN employees e ON d.dept_id = e.dept_id;
 
--- 26. List all employees and the departments they belong to, ensuring that departments with no employees are also listed.
-
-SELECT e.emp_name,
-       d.dept_name
-FROM employees e
-RIGHT JOIN departments d
-ON e.dept_id = d.dept_id;
-
-
--- 27. Show a list of employees who do not have any corresponding salary records, along with their names.
-
+-- 27. Employees without salary records
 SELECT e.emp_name
 FROM employees e
-LEFT JOIN salary s
-ON e.emp_id = s.emp_id
+LEFT JOIN salary s ON e.emp_id = s.emp_id
 WHERE s.emp_id IS NULL;
 
-
--- 28. Retrieve the names of employees and their project assignments, including employees who are not assigned to any projects.
-
-SELECT e.emp_name,
-       p.project_name
+-- 28. Employees with projects (including no project)
+SELECT e.emp_name, p.project_name
 FROM employees e
-LEFT JOIN projects p
-ON e.emp_id = p.emp_id;
+LEFT JOIN projects p ON e.emp_id = p.emp_id;
 
-
--- 29. List the names of all employees and their respective department and project assignments, including employees who are not assigned to a project or department.
-
-SELECT e.emp_name,
-       d.dept_name,
-       p.project_name
+-- 29. Employees with department and project details
+SELECT e.emp_name, d.dept_name, p.project_name
 FROM employees e
-LEFT JOIN departments d
-ON e.dept_id = d.dept_id
-LEFT JOIN projects p
-ON e.emp_id = p.emp_id;
+LEFT JOIN departments d ON e.dept_id = d.dept_id
+LEFT JOIN projects p ON e.emp_id = p.emp_id;
 
-
--- 30. Display the names of employees who belong to at least one department, with the department name listed, but include employees without a department as well.
-
-SELECT e.emp_name,
-       d.dept_name
+-- 30. Employees with departments (including NULL departments)
+SELECT e.emp_name, d.dept_name
 FROM employees e
-LEFT JOIN departments d
-ON e.dept_id = d.dept_id;
+LEFT JOIN departments d ON e.dept_id = d.dept_id;
