@@ -83,7 +83,6 @@ SELECT full_text,
 FROM regex_practice;
 
 -- Q17: Extract employee number between prefix and first underscore
--- Example: EMP001_IN_91 -> 001
 SELECT full_text,
        REGEXP_SUBSTR(full_text, '[0-9]+')
 FROM regex_practice;
@@ -94,7 +93,6 @@ SELECT full_text,
 FROM regex_practice;
 
 -- Q19: Extract alphabets between underscores
--- Example: EMP001_IN_91 -> IN
 SELECT full_text,
        REPLACE(
            REPLACE(REGEXP_SUBSTR(full_text, '_[A-Za-z]+_'), '_', ''),
@@ -104,7 +102,6 @@ SELECT full_text,
 FROM regex_practice;
 
 -- Q20: Extract digits after + in phone
--- Example: +91-9876543210 -> 91
 SELECT phone,
        REGEXP_SUBSTR(phone, '(?<=\\+)[0-9]+')
 FROM regex_practice;
